@@ -1,10 +1,10 @@
 package com.codingwithmitch.foodrecipes;
 
-import android.arch.lifecycle.Observer;
-import android.arch.lifecycle.ViewModelProviders;
+import androidx.annotation.NonNull;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v7.widget.AppCompatImageView;
+import androidx.appcompat.widget.AppCompatImageView;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,7 +33,7 @@ public class RecipeActivity extends BaseActivity {
 
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
+    protected void onCreate(@NonNull Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recipe);
         mRecipeImage = findViewById(R.id.recipe_image);
@@ -42,7 +42,7 @@ public class RecipeActivity extends BaseActivity {
         mRecipeIngredientsContainer = findViewById(R.id.ingredients_container);
         mScrollView = findViewById(R.id.parent);
 
-        mRecipeViewModel = ViewModelProviders.of(this).get(RecipeViewModel.class);
+        mRecipeViewModel = new ViewModelProvider.AndroidViewModelFactory(getApplication()).create(RecipeViewModel.class);
 
         getIncomingIntent();
     }
@@ -58,7 +58,7 @@ public class RecipeActivity extends BaseActivity {
     private void subscribeObservers(final String recipeId){
         mRecipeViewModel.searchRecipeApi(recipeId).observe(this, new Observer<Resource<Recipe>>() {
             @Override
-            public void onChanged(@Nullable Resource<Recipe> recipeResource) {
+            public void onChanged(@NonNull Resource<Recipe> recipeResource) {
                 if(recipeResource != null){
                     if(recipeResource.data != null){
                         switch (recipeResource.status){
@@ -75,8 +75,8 @@ public class RecipeActivity extends BaseActivity {
                                 setRecipeProperties(recipeResource.data);
                                 break;
                             }
-
                             case SUCCESS:{
+
                                 Log.d(TAG, "onChanged: cache has been refreshed.");
                                 Log.d(TAG, "onChanged: status: SUCCESS, Recipe: " + recipeResource.data.getTitle());
                                 showParent();
